@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#include <random>
+
+
+#define TRIALS 100000       //試行回数
+#define MAX_STATION 29      //駅の数
+
+char station[MAX_STATION][10] ={
+    "東京" ,
+    "有楽町" ,
+    "新橋" ,
+    "浜松町" ,
+    "田町" ,
+    "品川" ,
+    "大崎" ,
+    "五反田" ,
+    "目黒" ,
+    "恵比寿" ,
+    "渋谷" ,
+    "原宿" ,
+    "代々木" ,
+    "新宿" ,
+    "新大久保" ,
+    "高田馬場" ,
+    "目白" ,
+    "池袋" ,
+    "大塚" ,
+    "巣鴨" ,
+    "駒込" ,
+    "田畑" ,
+    "西日暮里" ,
+    "日暮里" ,
+    "鶯谷" ,
+    "上野" ,
+    "御徒町" ,
+    "秋葉原" ,
+    "神田" 
+};
+
+int stamp[MAX_STATION];
+int result[MAX_STATION] = { 0 };
+
+int sum_stamp() {
+    int sum = 0;
+    for (int i = 0; i < MAX_STATION; i++) {
+        sum += stamp[i];
+    }
+    return sum;
+}
+
+int main() {
+
+    int now_station;
+    int c;
+    int s;
+
+    //乱数にメルセンヌツイスタを使用
+    std::random_device rd;
+    std::mt19937 mt(rd());
+
+    for (int n = 0; n < TRIALS; n++) {
+
+        //初期化
+        c = 1;
+        now_station = 0;
+        for (int i = 0; i < MAX_STATION; i++) {
+            stamp[i] = 0;
+        }
+
+        stamp[now_station] = 1; //最初の駅にスタンプを押す
+
+        #if TRIALS == 1
+        printf("%2d  %2d %s\n", s, now_station + 1, station[now_station]);
+        #endif 
+
+        //実験開始
+        do {
+
+            //コインを投げて移動
+            if (rd() % 2 == 0) {
+                now_station++;
+                now_station %= MAX_STATION;
+            }
+            else {
+                now_station--;
+                if (now_station < 0) {
+                    now_station += MAX_STATION;
+                }
+            }
+
+
+            stamp[now_station] = 1; //現在の駅にスタンプを押す
+            c++;
+
+            s = sum_stamp();    //スタンプをの合計を数える
+
+            #if TRIALS == 1   //試行回数が1回の時のみ
+            printf("%2d  %2d %s \n", s, now_station, station[now_station]); //現在の駅を表示
+            #endif
+
+        } while (s < MAX_STATION); //スタンプが全部押されたら終了
+
+
+        #if TRIALS < 1000   //試行回数が1000回未満のときのみ
+        //最後の駅を表示
+        printf_s("最後の駅は「%s駅」　移動回数:%d\n", station[now_station], c);
+        #endif
+
+        result[now_station]++;
+    }
+
+    //結果を表示
+    for (int i = 0; i < MAX_STATION; i++) {
+
+        printf_s("%10s　,%4d ", station[i], result[i]);
+        
+        //グラフ表示
+        for (int j = 0; j < result[i] * 40 * MAX_STATION / TRIALS; j++) {
+            printf_s("*");
+        }
+        printf_s("\n");
+
+    }
+    return 0;
+}

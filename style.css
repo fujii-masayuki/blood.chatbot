@@ -1,0 +1,19 @@
+@charset "UTF-8";
+html {
+    font-size: 100%;
+}
+body {
+    background-color: #fffeee;
+}
+h1　{
+    font-family: serif;
+    font-size : 2rem;
+    font-weight : lighter;
+}
+
+p  {
+    font-size: 18px;  /*フォントサイズ*/
+    text-align: justify; /*文章を揃える*/
+    font-weight: lighter;
+}
+
